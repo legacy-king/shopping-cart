@@ -1,0 +1,28 @@
+.nav{
+    background-color: #1a1a2e;
+    padding: 1rem 2rem;
+    color: black;
+}
+
+.navList{
+    display:flex;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.navLink{
+    color:white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.cartBadge {
+  background-color: #e94560;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 6px;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f8f8f8;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #1a1a2e;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.shopBtn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.featured {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.featuredCard {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.featuredCard img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+}
+
+.featuredCard h3 {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  color: #333;
+}
