@@ -1,15 +1,15 @@
 import { Outlet } from "react-router";
 import Navbar from "./Navbar";
-import { useCart } from "./useCart";
+import { ShopProvider } from "./ShopContext";
 
 function App() {
-  const { items, addToCart, updateQuantity, removeFromCart, totalItems } = useCart();
-
   return (
-    <div>
-      <Navbar cartCount={totalItems} />
-      <Outlet context={{ items, addToCart, updateQuantity, removeFromCart }} />
-    </div>
+    <ShopProvider>
+      <div>
+        <Navbar />
+        <Outlet />
+      </div>
+    </ShopProvider>
   );
 }
 

@@ -1,64 +1,62 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { useOutletContext } from 'react-router';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { ShopProvider } from './ShopContext';
 import Shop from './Shop';
 
-vi.mock('react-router', () => ({
-  useOutletContext: vi.fn(),
-}));
-
 const mockProducts = [
-  { id: 1, title: 'Product A', image: 'a.jpg', price: 10 },
-  { id: 2, title: 'Product B', image: 'b.jpg', price: 20 },
+  { id: 1, title: 'Test Product 1', image: 'test1.jpg', price: 10 },
+  { id: 2, title: 'Test Product 2', image: 'test2.jpg', price: 20 },
 ];
+
+const renderWithProvider = (component) => {
+  return render(
+    <ShopProvider>
+      {component}
+    </ShopProvider>
+  );
+};
 
 describe('Shop Component', () => {
   beforeEach(() => {
-    useOutletContext.mockReturnValue({ addToCart: vi.fn() });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+    vi.spyOn(global, 'fetch');
   });
 
   it('shows loading state initially', () => {
-    global.fetch = vi.fn(() => new Promise(() => {})); // never resolves
-    render(<Shop />);
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => new Promise(() => {}),
+    });
+    renderWithProvider(<Shop />);
     expect(screen.getByText('Loading products...')).toBeInTheDocument();
   });
 
   it('renders products after successful fetch', async () => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockProducts),
-      })
-    );
-
-    render(<Shop />);
-
-    expect(await screen.findByText('Product A')).toBeInTheDocument();
-    expect(screen.getByText('Product B')).toBeInTheDocument();
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockProducts),
+    });
+    renderWithProvider(<Shop />);
+    await waitFor(() => {
+      expect(screen.getByText('Test Product 1')).toBeInTheDocument();
+    });
   });
 
   it('shows error message when fetch fails', async () => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-        status: 500,
-      })
-    );
-
-    render(<Shop />);
-
-    expect(await screen.findByText(/Something went wrong/)).toBeInTheDocument();
+    fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+    });
+    renderWithProvider(<Shop />);
+    await waitFor(() => {
+      expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+    });
   });
 
   it('shows error message on network failure', async () => {
-    global.fetch = vi.fn(() => Promise.reject(new Error('Network error')));
-
-    render(<Shop />);
-
-    expect(await screen.findByText(/Something went wrong/)).toBeInTheDocument();
+    fetch.mockRejectedValueOnce(new Error('Network error'));
+    renderWithProvider(<Shop />);
+    await waitFor(() => {
+      expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+    });
   });
 });

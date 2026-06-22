@@ -1,10 +1,10 @@
-import { useOutletContext } from "react-router";
+import { useShopContext } from './ShopContext';
 import styles from './Cart.module.css'
 
 
 
 function Cart () {
-    const { items, updateQuantity, removeFromCart } = useOutletContext();
+    const { items, updateQuantity, removeFromCart } = useShopContext();
 
     if (items.length === 0) return <p className={styles.empty}>Your cart is empty</p>;
 

@@ -1,8 +1,10 @@
 import { Link } from "react-router";
-import PropTypes from 'prop-types';
 import styles from './Navbar.module.css';
+import { useShopContext } from "./ShopContext";
 
-function Navbar ({ cartCount }) {
+function Navbar () {
+    const { totalItems } = useShopContext();
+
     return (
         <div className={styles.nav}>
             <ul className={styles.navList}>
@@ -13,7 +15,7 @@ function Navbar ({ cartCount }) {
                 </li>
                 <li>
                     <Link className={styles.navLink} to="cart"> 
-                    Cart <span className={styles.cartBadge}>{cartCount}</span>
+                    Cart <span className={styles.cartBadge}>{totalItems}</span>
                     </Link>
                 </li>
             </ul>
@@ -21,7 +23,5 @@ function Navbar ({ cartCount }) {
     )
 }
 
-Navbar.propTypes = {
-  cartCount: PropTypes.number.isRequired,
-};
+
 export default Navbar;
