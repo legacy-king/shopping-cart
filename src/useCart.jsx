@@ -1,36 +1,53 @@
-import { useState } from "react";
+import { useReducer } from "react";
 
-export function useCart() {
-  const [items, setItems] = useState([]);
+function cartReducer(state, action) {
+  switch (action.type) {
 
-  const addToCart = (product, quantity) => {
-    setItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+    case "ADD_TO_CART": {
+      const existingItem = state.find((item) => item.id === action.product.id);
       if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+        return state.map((item) =>
+          item.id === action.product.id
+            ? { ...item, quantity: item.quantity + action.quantity }
             : item
         );
       }
-      return [...prevItems, { ...product, quantity }];
-    });
+      return [...state, { ...action.product, quantity: action.quantity }];
+    }
+
+    case "REMOVE_FROM_CART": {
+      return state.filter((item) => item.id !== action.id);
+    }
+
+    case "UPDATE_QUANTITY": {
+      if (action.newQuantity <= 0) {
+        return state.filter((item) => item.id !== action.id);
+      }
+      return state.map((item) =>
+        item.id === action.id
+          ? { ...item, quantity: action.newQuantity }
+          : item
+      );
+    }
+
+    default:
+      throw new Error("Unknown action: " + action.type);
+  }
+}
+
+export function useCart() {
+  const [items, dispatch] = useReducer(cartReducer, []);
+
+  const addToCart = (product, quantity) => {
+    dispatch({ type: "ADD_TO_CART", product, quantity });
   };
 
   const removeFromCart = (id) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    dispatch({ type: "REMOVE_FROM_CART", id });
   };
 
   const updateQuantity = (id, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(id);
-      return;
-    }
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+    dispatch({ type: "UPDATE_QUANTITY", id, newQuantity });
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
